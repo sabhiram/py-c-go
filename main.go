@@ -17,15 +17,18 @@ func main() {
 	defer C.Py_Finalize()
 
 	/*
-	 *  Create a new generator from the C codez.
+	 *  Create a new generator using the C wrapper.
 	 */
-	gen := C.NewGenerator()
-	if gen == nil {
+	genObj := C.New()
+	if genObj == nil {
 		fmt.Printf("Fatal error: generator is null!\n")
 		os.Exit(1)
 	}
 
-	for n := C.Next(gen); n >= 0; n = C.Next(gen) {
+	/*
+	 *  Generate numbers!
+	 */
+	for n := C.Next(genObj); n >= 0; n = C.Next(genObj) {
 		fmt.Printf("Next random number: %d\n", n)
 	}
 }

@@ -3,12 +3,7 @@
 
 #include <python2.7/Python.h>
 
-typedef struct
-{
-    PyObject* instance;
-} Generator_t;
-
-Generator_t* NewGenerator(void);
-const int Next(const Generator_t* generator);
+PyObject* New(void);
+const int Next(PyObject* generator);
 
 #endif // _WRAPPER_H_

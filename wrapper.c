@@ -6,11 +6,11 @@
 #include "wrapper.h"
 
 /*
- *  This method creates an returns a `Generator_t*` which wraps the
- *  underlying python `fuzz.Fuzz()` instance.
+ *  New loads the `generator` module and returns a PyObject*
+ *  which represents the `random_generator` generator.
  */
-Generator_t*
-NewGenerator(void)
+PyObject*
+New(void)
 {
     /*
      *  Import the python module from the file `generator.py`.
@@ -22,15 +22,14 @@ NewGenerator(void)
         return NULL;
     }
 
-    PyObject* rgen = PyObject_CallMethod(module, "random_generator", NULL);
-    if (rgen == NULL)
-    {
-        printf("random_generator not found\n");
-        return NULL;
-    }
+    PyObject* gen = PyObject_CallMethod(module, "random_generator", NULL);
 
-    Generator_t* gen = malloc(sizeof *gen);
-    gen->instance = rgen;
+    /*
+     *  Remove the reference to the module.
+     *  TODO: Verify if this needs to be deferred?
+     */
+    Py_XDECREF(module);
+
     return gen;
 }
 
@@ -40,13 +39,17 @@ NewGenerator(void)
  *  Returns -1 if empty.
  */
 const int
-Next(const Generator_t* gen)
+Next(PyObject* gen)
 {
-    PyObject* line = PyIter_Next(gen->instance);
+    PyObject* line = PyIter_Next(gen);
     if (line == NULL)
         return -1;
 
     int v = PyInt_AsLong(line);
+
+    /*
+     *  The line has been used, relinquish!
+     */
     Py_DECREF(line);
 
     return v;

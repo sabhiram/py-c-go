@@ -7,6 +7,7 @@ import "C"
 import (
 	"fmt"
 	"os"
+	"unsafe"
 )
 
 func main() {
@@ -17,10 +18,19 @@ func main() {
 	defer C.Py_Finalize()
 
 	/*
+	 *  Import the python module from the file `generator.py`.
+	 */
+	module := C.PyImport_ImportModule(C.CString("generator"))
+	if unsafe.Pointer(module) == nil {
+		fmt.Printf("Unable to import `generator.py`\n")
+		os.Exit(1)
+	}
+
+	/*
 	 *  Create a new generator using the C wrapper.
 	 */
-	genObj := C.New()
-	if genObj == nil {
+	gen := C.random_generator(module)
+	if gen == nil {
 		fmt.Printf("Fatal error: generator is null!\n")
 		os.Exit(1)
 	}
@@ -28,7 +38,7 @@ func main() {
 	/*
 	 *  Generate numbers!
 	 */
-	for n := C.Next(genObj); n >= 0; n = C.Next(genObj) {
-		fmt.Printf("Next random number: %d\n", n)
+	for l := C.PyIter_Next(gen); unsafe.Pointer(l) != nil; l = C.PyIter_Next(gen) {
+		fmt.Printf("Next random number: %d\n", C.PyInt_AsLong(l))
 	}
 }

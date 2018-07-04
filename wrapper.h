@@ -3,7 +3,6 @@
 
 #include <python2.7/Python.h>
 
-PyObject* New(void);
-const int Next(PyObject* generator);
+PyObject* random_generator(PyObject* mod);
 
 #endif // _WRAPPER_H_

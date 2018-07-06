@@ -1,9 +1,20 @@
 package main
 
-// #cgo LDFLAGS: -lpython2.7
-// #cgo CFLAGS: -g -Wall
-// #include "wrapper.h"
+/*
+#cgo LDFLAGS: -lpython2.7
+#cgo CFLAGS: -g -Wall
+
+#include <python2.7/Python.h>
+
+PyObject*
+random_generator(PyObject* module)
+{
+    PyObject* gen = PyObject_CallMethod(module, "random_generator", NULL);
+    return gen;
+}
+*/
 import "C"
+
 import (
 	"fmt"
 	"os"

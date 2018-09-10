@@ -45,10 +45,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	// /*
-	//  *  Generate numbers!
-	//  */
-	// for l := C.PyIter_Next(gen); unsafe.Pointer(l) != nil; l = C.PyIter_Next(gen) {
-	// 	fmt.Printf("Next random number: %d\n", C.PyInt_AsLong(l))
-	// }
+	/*
+	 *  Generate numbers!
+	 */
+	for l := C.PyIter_Next(gen); unsafe.Pointer(l) != nil; l = C.PyIter_Next(gen) {
+		fmt.Printf("Next random number: %d\n", C.PyInt_AsLong(l))
+	}
 }

@@ -7,10 +7,9 @@ package main
 #include <python2.7/Python.h>
 
 PyObject*
-random_generator(PyObject* module)
+call_method_wrapper(PyObject *module, char *method)
 {
-    PyObject* gen = PyObject_CallMethod(module, "random_generator", NULL);
-    return gen;
+    return PyObject_CallMethod(module, method, NULL);
 }
 */
 import "C"
@@ -40,16 +39,16 @@ func main() {
 	/*
 	 *  Create a new generator using the C wrapper.
 	 */
-	gen := C.random_generator(module)
+	gen := C.call_method_wrapper(module, C.CString("random_generator"))
 	if gen == nil {
 		fmt.Printf("Fatal error: generator is null!\n")
 		os.Exit(1)
 	}
 
-	/*
-	 *  Generate numbers!
-	 */
-	for l := C.PyIter_Next(gen); unsafe.Pointer(l) != nil; l = C.PyIter_Next(gen) {
-		fmt.Printf("Next random number: %d\n", C.PyInt_AsLong(l))
-	}
+	// /*
+	//  *  Generate numbers!
+	//  */
+	// for l := C.PyIter_Next(gen); unsafe.Pointer(l) != nil; l = C.PyIter_Next(gen) {
+	// 	fmt.Printf("Next random number: %d\n", C.PyInt_AsLong(l))
+	// }
 }
